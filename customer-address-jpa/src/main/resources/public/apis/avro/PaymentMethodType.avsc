@@ -1,0 +1,6 @@
+{
+  "type" : "enum",
+  "name" : "PaymentMethodType",
+  "namespace" : "com.izertis.example.events.dtos",
+  "symbols" : [ "VISA", "MASTERCARD" ]
+}

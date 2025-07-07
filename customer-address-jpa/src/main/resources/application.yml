@@ -1,0 +1,61 @@
+logging:
+  level:
+    root: INFO
+    io.zenwave360.example: DEBUG
+    org.apache.kafka.clients.admin: WARN
+
+springdoc.swagger-ui.urls:
+  - name: ZenWave Customer JPA Example
+    url: /apis/openapi.yml
+
+management:
+  endpoints.web.exposure.include: "*"
+
+spring:
+  modulith.events.externalization.enabled: true
+  modulith.events.jdbc.schema-initialization.enabled: true
+  modulith.events.republish-outstanding-events-on-restart: true
+
+  security:
+    user:
+      name: user
+      password: password
+  jpa:
+    open-in-view: false
+    hibernate.ddl-auto: none
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    properties:
+      specific.avro.reader: true
+      schema.registry.url: ${SCHEMA_REGISTRY_URL}
+    producer:
+      auto.register.schemas: true
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+  cloud:
+    stream:
+      kafka.binder.enable-observation: true
+      function:
+        definition: on-customer-event;
+      bindings:
+        on-customer-event-out-0:
+          destination: customer.events.avro
+          content-type: application/*+avro
+          producer:
+            use-native-encoding: true
