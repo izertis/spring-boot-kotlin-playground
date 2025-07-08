@@ -16,8 +16,12 @@ class ExternalizationConfiguration {
 
     private Logger log = LoggerFactory.getLogger(ExternalizationConfiguration.class);
 
-    @Autowired
+    final
     IncompleteEventPublications incompleteEventPublications;
+
+    public ExternalizationConfiguration(IncompleteEventPublications incompleteEventPublications) {
+        this.incompleteEventPublications = incompleteEventPublications;
+    }
 
     @Scheduled(fixedRate = 30000)
     public void resubmitIncompletePublications() {

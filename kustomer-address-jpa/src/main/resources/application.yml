@@ -1,12 +1,10 @@
 logging:
   level:
-    com.izertis.examples: DEBUG
+    com.izertis.example: DEBUG
     org.apache.kafka.clients.admin: WARN
 
 springdoc.swagger-ui.urls:
-  - name: Login Form
-    url: /apis/login-openapi.yml
-  - name: Project Name
+  - name: Kustomer Address JPA Example
     url: /apis/openapi.yml
 
 management:
@@ -14,6 +12,10 @@ management:
 
 app:
 spring:
+  modulith.events.externalization.enabled: true
+  modulith.events.jdbc.schema-initialization.enabled: true
+  modulith.events.republish-outstanding-events-on-restart: true
+
   security:
     user:
       name: admin
@@ -35,18 +37,26 @@ spring:
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
-  data:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    properties:
+      specific.avro.reader: true
+      schema.registry.url: ${SCHEMA_REGISTRY_URL}
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      auto.register.schemas: true
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
   cloud:
     stream:
       kafka.binder.enable-observation: true
-      function:
-        definition: on-customer-event;
+#      function:
+#        definition: on-customer-event;
       bindings:
         on-customer-event-out-0:
-          destination: customer.events
+          destination: customer.events.avro
+          content-type: application/*+avro
+          producer:
+            use-native-encoding: true
