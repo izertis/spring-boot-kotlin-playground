@@ -4,17 +4,14 @@ import com.izertis.example.repository.jpa.inmemory.CustomerRepositoryInMemory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 
-
-//@Configuration
+// @Configuration
 open class RepositoriesInMemoryConfig {
 
+  protected val customerRepository = CustomerRepositoryInMemory()
 
-    protected val customerRepository = CustomerRepositoryInMemory()
-
-    @Bean
-    @Primary
-    fun customerRepository(): CustomerRepositoryInMemory {
-        return customerRepository
-    }
-
+  @Bean
+  @Primary
+  fun customerRepository(): CustomerRepositoryInMemory {
+    return customerRepository
+  }
 }

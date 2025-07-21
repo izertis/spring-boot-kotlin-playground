@@ -2,7 +2,6 @@ package com.izertis.example.service.impl.mappers
 
 import com.izertis.example.domain.Customer
 import com.izertis.example.service.dtos.CustomerSearchCriteria
-
 import org.mapstruct.AfterMapping
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
@@ -12,26 +11,26 @@ import org.mapstruct.factory.Mappers
 @Mapper(uses = [BaseMapper::class])
 interface CustomerServiceMapper {
 
-    companion object {
-        val INSTANCE: CustomerServiceMapper = Mappers.getMapper(CustomerServiceMapper::class.java)
-    }
+  companion object {
+    val INSTANCE: CustomerServiceMapper = Mappers.getMapper(CustomerServiceMapper::class.java)
+  }
 
-    // input mappings
-    // CustomerSearchCriterianull-Customer searchCustomers
-    fun asCustomer(input: CustomerSearchCriteria): Customer
-    @Mapping(target = "id", ignore = true)
-    fun update(@MappingTarget entity: Customer, input: CustomerSearchCriteria): Customer
+  // input mappings
+  // CustomerSearchCriterianull-Customer searchCustomers
+  fun asCustomer(input: CustomerSearchCriteria): Customer
 
-    // Customer-Customer updateCustomer
-    fun asCustomer(input: Customer): Customer
-    @Mapping(target = "id", ignore = true)
-    fun update(@MappingTarget entity: Customer, input: Customer): Customer
+  @Mapping(target = "id", ignore = true)
+  fun update(@MappingTarget entity: Customer, input: CustomerSearchCriteria): Customer
 
-    // output mappings
-    @AfterMapping
-    fun manageRelationships(@MappingTarget entity: Customer) {
-        entity.paymentMethods?.forEach { paymentMethods ->
-            paymentMethods.customer = entity
-        }
-    }
+  // Customer-Customer updateCustomer
+  fun asCustomer(input: Customer): Customer
+
+  @Mapping(target = "id", ignore = true)
+  fun update(@MappingTarget entity: Customer, input: Customer): Customer
+
+  // output mappings
+  @AfterMapping
+  fun manageRelationships(@MappingTarget entity: Customer) {
+    entity.paymentMethods?.forEach { paymentMethods -> paymentMethods.customer = entity }
+  }
 }

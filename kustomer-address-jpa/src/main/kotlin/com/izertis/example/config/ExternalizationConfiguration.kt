@@ -15,17 +15,17 @@ import java.util.function.Predicate
 @EnableSpringCloudStreamEventExternalization
 @EnableScheduling
 internal open class ExternalizationConfiguration {
-    private val log: Logger = LoggerFactory.getLogger(ExternalizationConfiguration::class.java)
+  private val log: Logger = LoggerFactory.getLogger(ExternalizationConfiguration::class.java)
 
-    @Autowired
-    var incompleteEventPublications: IncompleteEventPublications? = null
+  @Autowired var incompleteEventPublications: IncompleteEventPublications? = null
 
-    @Scheduled(fixedRate = 30000)
-    fun resubmitIncompletePublications() {
-        incompleteEventPublications!!.resubmitIncompletePublications(Predicate { eventPublication: EventPublication? ->
-            // Handle resubmitted publication
-            log.debug("Resubmitted publication: {}", eventPublication)
-            true
+  @Scheduled(fixedRate = 30000)
+  fun resubmitIncompletePublications() {
+    incompleteEventPublications!!.resubmitIncompletePublications(
+        Predicate { eventPublication: EventPublication? ->
+          // Handle resubmitted publication
+          log.debug("Resubmitted publication: {}", eventPublication)
+          true
         })
-    }
+  }
 }

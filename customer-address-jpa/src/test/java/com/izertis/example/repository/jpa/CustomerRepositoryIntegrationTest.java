@@ -41,12 +41,7 @@ class CustomerRepositoryIntegrationTest extends BaseRepositoryIntegrationTest {
         Customer customer = new Customer();
         customer.setName("Jane Smith");
         customer.setEmail("jane.smith@example.com");
-        customer.setAddresses(List.of(
-                        new Address()
-                                .setStreet("456 Elm St")
-                                .setCity("Othertown")
-                )
-        );
+        customer.setAddresses(List.of(new Address().setStreet("456 Elm St").setCity("Othertown")));
 
         // OneToMany paymentMethods owner: true
         var paymentMethods = new PaymentMethod();
@@ -73,7 +68,6 @@ class CustomerRepositoryIntegrationTest extends BaseRepositoryIntegrationTest {
         var customer = customerRepository.findById(id).orElseThrow();
         customer.setName("updated");
         customer.setEmail("updated@email.com");
-
 
         customer = customerRepository.save(customer);
         Assertions.assertEquals("updated", customer.getName());

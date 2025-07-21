@@ -1,10 +1,10 @@
 package com.izertis.example.domain
 
 import com.fasterxml.jackson.annotation.JsonManagedReference
-import java.io.Serializable
-import java.time.*
 import jakarta.persistence.*
-import jakarta.validation.constraints.*
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.annotations.JdbcTypeCode
@@ -14,57 +14,52 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.io.Serializable
+import java.time.LocalDateTime
 
-/**
-*
-*/
+/**  */
 @Entity
 @Table(name = "customer")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)@EntityListeners(AuditingEntityListener::class)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@EntityListeners(AuditingEntityListener::class)
 data class Customer(
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE) var id: Long? = null,
 
-    var id: Long? = null,
+    @Version var version: Int? = null,
 
-    @Version
-    var version: Int? = null,
+    /** Customer name */
+    @NotNull
+    @Size(max = 254)
+    @Column(name = "name", nullable = false, length = 254)
+    var name: String? = null,
+    @NotNull
+    @Size(max = 254)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}")
+    @Column(name = "email", nullable = false, length = 254)
+    var email: String? = null,
 
-    /**
-    * Customer name
-    */
-    @NotNull @Size(max = 254)@Column(name = "name", nullable = false, length = 254)
-    var name: String?  = null,
-
-    @NotNull @Size(max = 254) @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}")@Column(name = "email", nullable = false, length = 254)
-    var email: String?  = null,
-
-    /**
-    * Customer Addresses can be stored in a JSON column in the database.
-    */
+    /** Customer Addresses can be stored in a JSON column in the database. */
     @Size(min = 1, max = 5)
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "addresses")
-    var addresses: MutableList<Address> = mutableListOf()
-
-
-
-    ,
-
-    @NotNull @Size(max = 3)
-
-@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@JsonManagedReference
-
-
+    var addresses: MutableList<Address> = mutableListOf(),
+    @NotNull
+    @Size(max = 3)
+    @OneToMany(
+        mappedBy = "customer",
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonManagedReference
     var paymentMethods: Set<PaymentMethod> = mutableSetOf()
-
-)  : Serializable {
+) : Serializable {
 
     companion object {
         private const val serialVersionUID = 1L
     }
+
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     var createdBy: String? = null
@@ -80,6 +75,7 @@ data class Customer(
     @LastModifiedDate
     @Column(name = "last_modified_date", columnDefinition = "TIMESTAMP")
     var lastModifiedDate: LocalDateTime? = null
+
     // manage relationships
     fun addPaymentMethods(paymentMethods: PaymentMethod): Customer {
         this.paymentMethods += paymentMethods
@@ -93,8 +89,7 @@ data class Customer(
         return this
     }
 
-
-override fun toString(): String {
+    override fun toString(): String {
         return this::class.java.name + "#" + id
     }
 
@@ -108,5 +103,4 @@ override fun toString(): String {
     override fun hashCode(): Int {
         return javaClass.hashCode()
     }
-
 }

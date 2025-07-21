@@ -1,12 +1,12 @@
 package com.izertis.example.web.mappers
 
 import org.mapstruct.Mapper
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.core.io.Resource
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import org.springframework.core.io.ByteArrayResource
-import org.springframework.core.io.Resource
 
 @Mapper
 interface BaseMapper {

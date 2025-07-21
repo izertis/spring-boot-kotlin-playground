@@ -15,12 +15,11 @@ import org.springframework.web.context.WebApplicationContext
 @org.springframework.transaction.annotation.Transactional
 abstract class BaseWebTestClientTest {
 
-    @Autowired
-    protected lateinit var context: WebApplicationContext
-    protected lateinit var webTestClient: WebTestClient
+  @Autowired protected lateinit var context: WebApplicationContext
+  protected lateinit var webTestClient: WebTestClient
 
-    @BeforeEach
-    fun setup() {
-        this.webTestClient = MockMvcWebTestClient.bindToApplicationContext(this.context).build()
-    }
+  @BeforeEach
+  fun setup() {
+    this.webTestClient = MockMvcWebTestClient.bindToApplicationContext(this.context).build()
+  }
 }

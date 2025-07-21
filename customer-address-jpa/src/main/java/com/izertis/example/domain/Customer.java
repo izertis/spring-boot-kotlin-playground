@@ -1,8 +1,8 @@
 package com.izertis.example.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** */
+/**  */
 @lombok.Getter
 @lombok.Setter
 @Entity
@@ -46,7 +46,7 @@ public class Customer implements Serializable {
 
     @NotNull
     @Size(max = 254)
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}")
+    @Email
     @Column(name = "email", nullable = false, length = 254)
     private String email;
 

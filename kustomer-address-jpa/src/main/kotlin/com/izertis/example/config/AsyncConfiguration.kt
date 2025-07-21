@@ -18,23 +18,24 @@ import java.util.concurrent.Executor
 @EnableAsync
 @EnableScheduling
 @Profile("!testdev & !testprod")
-open class AsyncConfiguration(private val taskExecutionProperties: TaskExecutionProperties) : AsyncConfigurer {
-    @Bean(name = ["taskExecutor"])
-    override fun getAsyncExecutor(): Executor? {
-        log.debug("Creating Async Task Executor")
-        val executor = ThreadPoolTaskExecutor()
-        executor.setCorePoolSize(taskExecutionProperties.getPool().getCoreSize())
-        executor.setMaxPoolSize(taskExecutionProperties.getPool().getMaxSize())
-        executor.setQueueCapacity(taskExecutionProperties.getPool().getQueueCapacity())
-        executor.setThreadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
-        return executor
-    }
+open class AsyncConfiguration(private val taskExecutionProperties: TaskExecutionProperties) :
+    AsyncConfigurer {
+  @Bean(name = ["taskExecutor"])
+  override fun getAsyncExecutor(): Executor? {
+    log.debug("Creating Async Task Executor")
+    val executor = ThreadPoolTaskExecutor()
+    executor.setCorePoolSize(taskExecutionProperties.getPool().getCoreSize())
+    executor.setMaxPoolSize(taskExecutionProperties.getPool().getMaxSize())
+    executor.setQueueCapacity(taskExecutionProperties.getPool().getQueueCapacity())
+    executor.setThreadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
+    return executor
+  }
 
-    override fun getAsyncUncaughtExceptionHandler(): AsyncUncaughtExceptionHandler? {
-        return SimpleAsyncUncaughtExceptionHandler()
-    }
+  override fun getAsyncUncaughtExceptionHandler(): AsyncUncaughtExceptionHandler? {
+    return SimpleAsyncUncaughtExceptionHandler()
+  }
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(AsyncConfiguration::class.java)
-    }
+  companion object {
+    private val log: Logger = LoggerFactory.getLogger(AsyncConfiguration::class.java)
+  }
 }

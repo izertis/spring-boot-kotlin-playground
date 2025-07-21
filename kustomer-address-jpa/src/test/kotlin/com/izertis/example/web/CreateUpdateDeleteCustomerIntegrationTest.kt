@@ -1,25 +1,19 @@
 package com.izertis.example.web
 
-import com.izertis.example.web.*
-import com.izertis.example.web.dtos.*
-
+import com.izertis.example.web.dtos.CustomerDTO
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpMethod.*
 import org.springframework.http.MediaType
 
-import org.springframework.http.HttpMethod.*
-
-/**
- * Business Flow Test for: createCustomer, getCustomer, updateCustomer, deleteCustomer.
- */
+/** Business Flow Test for: createCustomer, getCustomer, updateCustomer, deleteCustomer. */
 open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
 
-    /**
-     * Business Flow Test for: createCustomer, getCustomer, updateCustomer, deleteCustomer.
-     */
-    @Test
-    fun testCreateUpdateDeleteCustomerIntegrationTest() {
-        // createCustomer: createCustomer
-        val customerRequestBody0 = """
+  /** Business Flow Test for: createCustomer, getCustomer, updateCustomer, deleteCustomer. */
+  @Test
+  fun testCreateUpdateDeleteCustomerIntegrationTest() {
+    // createCustomer: createCustomer
+    val customerRequestBody0 =
+        """
             {
               "id" : 41,
               "version" : 75,
@@ -38,25 +32,36 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
             }
         """
 
-        val createCustomerResponse0 = webTestClient.method(POST).uri("/api/customers")
+    val createCustomerResponse0 =
+        webTestClient
+            .method(POST)
+            .uri("/api/customers")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(customerRequestBody0)
             .exchange()
-            .expectStatus().isEqualTo(201)
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectStatus()
+            .isEqualTo(201)
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
-        // getCustomer: getCustomer
-        val customerId1 = ""
+    // getCustomer: getCustomer
+    val customerId1 = ""
 
-        val getCustomerResponse1 = webTestClient.method(GET).uri("/api/customers/{customerId}", customerId1)
+    val getCustomerResponse1 =
+        webTestClient
+            .method(GET)
+            .uri("/api/customers/{customerId}", customerId1)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
-            .expectStatus().isEqualTo(200)
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectStatus()
+            .isEqualTo(200)
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
-        // updateCustomer: updateCustomer
-        val customerRequestBody2 = """
+    // updateCustomer: updateCustomer
+    val customerRequestBody2 =
+        """
             {
               "id" : 56,
               "version" : 90,
@@ -74,23 +79,30 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
               } ]
             }
         """
-        val customerId2 = ""
+    val customerId2 = ""
 
-        val updateCustomerResponse2 = webTestClient.method(PUT).uri("/api/customers/{customerId}", customerId2)
+    val updateCustomerResponse2 =
+        webTestClient
+            .method(PUT)
+            .uri("/api/customers/{customerId}", customerId2)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(customerRequestBody2)
             .exchange()
-            .expectStatus().isEqualTo(200)
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectStatus()
+            .isEqualTo(200)
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
-        // deleteCustomer: deleteCustomer
-        val customerId3 = ""
+    // deleteCustomer: deleteCustomer
+    val customerId3 = ""
 
-        webTestClient.method(DELETE).uri("/api/customers/{customerId}", customerId3)
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus().isEqualTo(204)
-    }
-
+    webTestClient
+        .method(DELETE)
+        .uri("/api/customers/{customerId}", customerId3)
+        .accept(MediaType.APPLICATION_JSON)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(204)
+  }
 }
