@@ -25,9 +25,9 @@ public class InMemoryJpaRepository<T> implements JpaRepository<T, Long> {
 
     // private final PrimaryKeyGenerator<Long> primaryKeyGenerator = () ->
     // UUID.randomUUID().toString();
-    private long nextId = 0;
+    protected long nextId = 0;
 
-    private final PrimaryKeyGenerator<Long> primaryKeyGenerator = () -> nextId++;
+    protected final PrimaryKeyGenerator<Long> primaryKeyGenerator = () -> nextId++;
 
     public void clear() {
         nextId = 0;

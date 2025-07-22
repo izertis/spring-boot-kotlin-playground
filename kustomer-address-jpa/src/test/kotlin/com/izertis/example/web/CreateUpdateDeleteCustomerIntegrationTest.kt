@@ -15,20 +15,20 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
     val customerRequestBody0 =
         """
             {
-              "id" : 41,
-              "version" : 75,
-              "name" : "name-cri0m8h4v96piit1m",
-              "email" : "anabel.dietrich@yahoo.com",
-              "addresses" : [ {
-                "street" : "street-5ij3u4dkzk0s4ndbu",
-                "city" : "North Renaldoshire"
-              } ],
-              "paymentMethods" : [ {
-                "id" : 11,
-                "version" : 93,
-                "type" : "MASTERCARD",
-                "cardNumber" : "cardNumber-wu58mfimeift0p0"
-              } ]
+              "email": "jane.doe@example.com",
+              "name": "Jane Doe",
+              "addresses": [
+                {
+                  "city": "Othertown",
+                  "street": "456 Elm St"
+                }
+              ],
+              "paymentMethods": [
+                {
+                  "type": "VISA",
+                  "cardNumber": "6543210987654321"
+                }
+              ]
             }
         """
 
@@ -46,12 +46,12 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
             .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
     // getCustomer: getCustomer
-    val customerId1 = ""
+    val customerId = createCustomerResponse0.getResponseBody().blockFirst()?.id
 
     val getCustomerResponse1 =
         webTestClient
             .method(GET)
-            .uri("/api/customers/{customerId}", customerId1)
+            .uri("/api/customers/{customerId}", customerId)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -59,32 +59,20 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
-    // updateCustomer: updateCustomer
-    val customerRequestBody2 =
-        """
-            {
-              "id" : 56,
-              "version" : 90,
-              "name" : "name-w8p45",
-              "email" : "domenic.hudson@yahoo.com",
-              "addresses" : [ {
-                "street" : "street-lfgox0iaa262os31m2b",
-                "city" : "West Denicemouth"
-              } ],
-              "paymentMethods" : [ {
-                "id" : 38,
-                "version" : 77,
-                "type" : "MASTERCARD",
-                "cardNumber" : "cardNumber-q98zhan60nvl7ig"
-              } ]
-            }
-        """
-    val customerId2 = ""
 
-    val updateCustomerResponse2 =
+      // updateCustomer: updateCustomer
+      val customerRequestBody2 = getCustomerResponse1.responseBody.blockFirst()?.let { customer ->
+          customer.copy(
+              name = "updated",
+              email = "updated@email.com",
+              paymentMethods = customer.paymentMethods
+          )
+      }
+
+      val updateCustomerResponse2 =
         webTestClient
             .method(PUT)
-            .uri("/api/customers/{customerId}", customerId2)
+            .uri("/api/customers/{customerId}", customerId)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(customerRequestBody2)
@@ -94,12 +82,11 @@ open class CreateUpdateDeleteCustomerIntegrationTest : BaseWebTestClientTest() {
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
             .returnResult(CustomerDTO::class.java)
-    // deleteCustomer: deleteCustomer
-    val customerId3 = ""
 
+    // deleteCustomer: deleteCustomer
     webTestClient
         .method(DELETE)
-        .uri("/api/customers/{customerId}", customerId3)
+        .uri("/api/customers/{customerId}", customerId)
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
         .expectStatus()

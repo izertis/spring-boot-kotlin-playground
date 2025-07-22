@@ -5,79 +5,83 @@ import com.izertis.example.domain.Customer
 import com.izertis.example.domain.PaymentMethod
 import com.izertis.example.domain.PaymentMethodType
 import jakarta.persistence.EntityManager
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.List
 
 class CustomerRepositoryIntegrationTest : BaseRepositoryIntegrationTest() {
 
-  @Autowired lateinit var entityManager: EntityManager
+    @Autowired
+    lateinit var entityManager: EntityManager
 
-  @Autowired lateinit var customerRepository: CustomerRepository
+    @Autowired
+    lateinit var customerRepository: CustomerRepository
 
-  @Test
-  fun findAllTest() {
-    val results = customerRepository.findAll()
-    Assertions.assertFalse(results.isEmpty())
-  }
+    private val id = 1L
 
-  @Test
-  fun findByIdTest() {
-    val id = 1L
-    val customer = customerRepository.findById(id).orElseThrow()
-    Assertions.assertNotNull(customer.id)
-    Assertions.assertNotNull(customer.version)
-    Assertions.assertNotNull(customer.createdBy)
-    Assertions.assertNotNull(customer.createdDate)
-  }
+    @Test
+    fun findAllTest() {
+        val results = customerRepository.findAll()
+        assertFalse(results.isEmpty())
+    }
 
-  @Test
-  fun saveTest() {
-    val customer = Customer(
-      name = "Jane Smith",
-      email = "jane.smith@example.com",
-      addresses = mutableListOf(
-          Address(street = "456 Elm St", city = "Othertown")),
-    )
-    .addPaymentMethods(PaymentMethod(
-      type = PaymentMethodType.VISA,
-      cardNumber = "6543210987654321"
-    ))
-    // Persist aggregate root
-    val created = customerRepository.save(customer)
+    @Test
+    fun findByIdTest() {
+        val customer = customerRepository.findById(id).orElseThrow()
+        assertNotNull(customer.id)
+        assertNotNull(customer.version)
+        assertNotNull(customer.createdBy)
+        assertNotNull(customer.createdDate)
+    }
 
-    // reloading to get relationships persisted by id
-    entityManager.flush()
-    entityManager.refresh(created)
-    Assertions.assertNotNull(created.id)
-    Assertions.assertNotNull(created.version)
-    Assertions.assertNotNull(created.createdBy)
-    Assertions.assertNotNull(created.createdDate)
+    @Test
+    fun saveTest() {
+        val customer = Customer().apply {
+            name = "Jane Smith"
+            email = "jane.smith@example.com"
+            addresses = mutableListOf(Address().apply {
+                street = "456 Elm St"
+                city = "Othertown"
+            })
+        }
 
-    Assertions.assertTrue(
-        customer.paymentMethods?.stream()?.allMatch { item -> item.id != null } == true)
-  }
+        // OneToMany paymentMethods owner: true
+        val paymentMethod = PaymentMethod().apply {
+            type = PaymentMethodType.VISA
+            cardNumber = "6543210987654321"
+        }
+        customer.addPaymentMethods(paymentMethod)
 
-  @Test
-  fun updateTest() {
-    val id = 1L
-    val customer = customerRepository.findById(id).orElseThrow()
-    customer.name = ""
-    customer.email = ""
-    customer.addresses = List.of(Address())
+        // Persist aggregate root
+        val created = customerRepository.save(customer)
 
-    val updated = customerRepository.save(customer)
-    Assertions.assertEquals("", updated.name)
-    Assertions.assertEquals("", updated.email)
-    Assertions.assertEquals(List.of(Address()), updated.addresses)
-  }
+        // reloading to get relationships persisted by id
+        entityManager.flush()
+        entityManager.refresh(created)
 
-  @Test
-  fun deleteTest() {
-    val id = 1L
-    customerRepository.deleteById(id)
-    val notFound = customerRepository.findById(id)
-    Assertions.assertFalse(notFound.isPresent)
-  }
+        assertNotNull(created.id)
+        assertNotNull(created.version)
+        assertNotNull(created.createdBy)
+        assertNotNull(created.createdDate)
+
+        assertTrue(customer.paymentMethods?.all { it.id != null } == true)
+    }
+
+    @Test
+    fun updateTest() {
+        val customer = customerRepository.findById(id).orElseThrow()
+        customer.name = "updated"
+        customer.email = "updated@email.com"
+
+        val updated = customerRepository.save(customer)
+        assertEquals("updated", updated.name)
+        assertEquals("updated@email.com", updated.email)
+    }
+
+    @Test
+    fun deleteTest() {
+        customerRepository.deleteById(id)
+        val notFound = customerRepository.findById(id)
+        assertFalse(notFound.isPresent)
+    }
 }

@@ -12,22 +12,22 @@ open class CustomerApiIntegrationTest : BaseWebTestClientTest() {
   fun testCreateCustomer_201() {
     val requestBody =
         """
+        {
+          "email": "jane.doe@example.com",
+          "name": "Jane Doe",
+          "addresses": [
             {
-              "id" : 63,
-              "version" : 10,
-              "name" : "name-zmbfib58c16uzmn4q2dmg",
-              "email" : "jesse.barrows@yahoo.com",
-              "addresses" : [ {
-                "street" : "street-msjedgjpv400vu89dqs",
-                "city" : "Melodeeburgh"
-              } ],
-              "paymentMethods" : [ {
-                "id" : 24,
-                "version" : 34,
-                "type" : "VISA",
-                "cardNumber" : "cardNumber-a9u687hxv4"
-              } ]
+              "city": "Othertown",
+              "street": "456 Elm St"
             }
+          ],
+          "paymentMethods": [
+            {
+              "type": "VISA",
+              "cardNumber": "6543210987654321"
+            }
+          ]
+        }
         """
 
     webTestClient
@@ -75,7 +75,7 @@ open class CustomerApiIntegrationTest : BaseWebTestClientTest() {
   /** Test: getCustomer for OK. */
   @Test
   fun testGetCustomer_200() {
-    val customerId = ""
+    val customerId = "1"
 
     webTestClient
         .method(GET)
@@ -122,24 +122,27 @@ open class CustomerApiIntegrationTest : BaseWebTestClientTest() {
   fun testUpdateCustomer_200() {
     val requestBody =
         """
+        {
+          "id": 1,
+          "version": 1,
+          "email": "john.doe@example.com",
+          "name": "John Doe",
+          "addresses": [
             {
-              "id" : 68,
-              "version" : 89,
-              "name" : "name-91rbx8",
-              "email" : "miki.baumbach@hotmail.com",
-              "addresses" : [ {
-                "street" : "street-6aw8fon78i",
-                "city" : "New Erikaland"
-              } ],
-              "paymentMethods" : [ {
-                "id" : 15,
-                "version" : 53,
-                "type" : "MASTERCARD",
-                "cardNumber" : "cardNumber-nxo9a9bt29u3ik7"
-              } ]
+              "city": "Anytown",
+              "street": "123 Main St"
             }
+          ],
+          "paymentMethods": [
+            {
+              "type": "VISA",
+              "customerId": 1,
+              "cardNumber": "1234567890123456"
+            }
+          ]
+        }
         """
-    val customerId = ""
+    val customerId = "1"
 
     webTestClient
         .method(PUT)
@@ -186,7 +189,7 @@ open class CustomerApiIntegrationTest : BaseWebTestClientTest() {
   /** Test: deleteCustomer for OK. */
   @Test
   fun testDeleteCustomer_204() {
-    val customerId = ""
+    val customerId = "1"
 
     webTestClient
         .method(DELETE)
@@ -203,15 +206,15 @@ open class CustomerApiIntegrationTest : BaseWebTestClientTest() {
     val requestBody =
         """
             {
-              "name" : "name-ynsjnot32jxop55ze1pm7",
-              "email" : "rigoberto.walker@yahoo.com",
-              "city" : "Port Takishafurt",
-              "state" : "state-alyno2tdpxbb1hyflo89"
+              "name" : "Jane Doe",
+              "email" : "jane.doe@example.com",
+              "city" : "Othertownt",
+              "state" : "NY"
             }
         """
-    val page = ""
-    val limit = ""
-    val sort = ""
+      val page = "0"
+      val limit = "10"
+      val sort = "name:asc"
 
     webTestClient
         .method(POST)

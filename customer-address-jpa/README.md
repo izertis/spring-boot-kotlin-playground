@@ -1,5 +1,9 @@
 # Customer JPA Example
 
+**NOTE**: this project is part of a comparison between Java and Kotlin for an Adictos al Trabajo article. You can find the article [here](https://adictosaltrabajo.com/2025/11/11/TODO).
+
+You can find the Kotlin version of this project [here](../kustomer-address-jpa).
+
 ## Requirements
 
 * JDK 21+

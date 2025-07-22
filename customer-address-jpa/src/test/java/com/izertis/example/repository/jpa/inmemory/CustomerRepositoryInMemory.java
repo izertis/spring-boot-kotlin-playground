@@ -7,14 +7,11 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class CustomerRepositoryInMemory extends InMemoryJpaRepository<Customer> implements CustomerRepository {
 
-    private long nextId = 0;
-    private final PrimaryKeyGenerator<Long> primaryKeyGenerator = () -> nextId++;
-
     public Customer save(Customer entity) {
-        entity = super.save(entity);
-        entity.getPaymentMethods().forEach(paymentMethod -> {
-            paymentMethod.setId(firstNonNull(paymentMethod.getId(), primaryKeyGenerator.next()));
+        Customer finalEntity = super.save(entity);
+        finalEntity.getPaymentMethods().forEach(paymentMethod -> {
+            paymentMethod.setId(firstNonNull(paymentMethod.getId(), finalEntity.getId()));
         });
-        return entity;
+        return finalEntity;
     }
 }
