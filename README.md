@@ -1,1 +1,137 @@
-# spring-boot-kotlin-playground
+# Spring Boot Kotlin Playground
+
+A comprehensive comparison project demonstrating Spring Boot application development using both Java and Kotlin, showcasing enterprise-grade integrations and tooling.
+
+**Note**: These projects serve as practical examples for the article [Desarrollando aplicaciones Spring Boot con Kotlin: Un análisis en profundidad](https://adictosaltrabajo.com/2025/11/11/desarrollando-aplicaciones-spring-boot-con-kotlin-un-an%C3%A1lisis-en-profundidad/) (Spanish).
+
+## Project Overview
+
+This playground project implements identical functionality in both Java and Kotlin to provide a practical comparison between the two languages in the context of modern Spring Boot enterprise applications. The project demonstrates how to integrate various code generation tools, annotation processors, and build systems while maintaining full Java-Kotlin interoperability.
+
+### Projects Structure
+
+- **Customer Address JPA (Java)**: [customer-address-jpa/](./customer-address-jpa/) - Java implementation
+- **Kustomer Address JPA (Kotlin)**: [kustomer-address-jpa/](./kustomer-address-jpa/) - Kotlin implementation with dual Maven/Gradle support
+
+Both projects implement a Customer management API with:
+- Address collection stored as JSON in database
+- PaymentMethod entities managed via JPA `@OneToMany` relationship
+- Custom enum converter for database persistence
+
+## Technology Stack
+
+### Core Framework
+- **Spring Boot 3.5.x**
+- **Spring Data JPA** with Hibernate
+- **Spring Security** with basic authentication
+- **Spring Cloud Streams** for event processing
+
+### Code Generation & API-First
+- **OpenAPI Generator** - REST API interfaces and DTOs generation
+- **AsyncAPI/ZenWave SDK** - Event-driven interfaces and Spring Cloud Streams integration
+- **Apache Avro** - Binary serialization for Kafka events
+- **MapStruct** - Object mapping with annotation processing
+
+### Build Tools & Languages
+- **Java 21+** / **Kotlin 2.2.0**
+- **Maven 3.8+** and **Gradle 8.x** (Kotlin project supports both)
+- **Kotlin Annotation Processing (Kapt)** for MapStruct integration
+
+### Testing & Infrastructure
+- **TestContainers** with Docker Compose
+- **PostgreSQL** database
+- **Apache Kafka** for event streaming
+
+## Getting Started
+
+### Prerequisites
+
+- Java 21+
+- Maven 3.8+ or Gradle 8.x
+- Docker & Docker Compose
+- Git
+
+### Running the Applications
+
+1. **Start infrastructure dependencies:**
+```bash
+docker-compose up -d
+```
+
+2. **Run Java project:**
+```bash
+cd customer-address-jpa
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+3. **Run Kotlin project (Maven):**
+```bash
+cd kustomer-address-jpa
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+4. **Run Kotlin project (Gradle):**
+```bash
+cd kustomer-address-jpa
+./gradlew bootRun --args='--spring.profiles.active=local'
+```
+
+### API Access
+
+- **Java API**: http://localhost:8080/swagger-ui/index.html
+- **Kotlin API**: http://localhost:8081/swagger-ui/index.html
+- **Default credentials**: `admin/password`
+
+## Key Features Demonstrated
+
+### API-First Development
+- OpenAPI 3.0 specification with code generation
+- AsyncAPI for event-driven architecture
+- Avro schema evolution for Kafka serialization
+
+### Enterprise Integration Challenges
+- **Annotation Processing**: MapStruct working with Kotlin and generated Java code
+- **Build Tool Configuration**: Proper task dependencies and source sets
+- **Interoperability**: Seamless Java-Kotlin code integration
+
+### Modern Development Practices
+- Domain-driven design with aggregates
+- Event sourcing with Spring Cloud Streams
+- Container-first development with TestContainers
+- Security-first approach with Spring Security
+
+## Build Configuration Highlights
+
+The Kotlin project demonstrates critical configuration aspects:
+
+- **Kapt Configuration**: Proper setup for annotation processors in Kotlin
+- **Task Dependencies**: Ensuring code generation runs before compilation
+- **Source Sets**: Managing generated sources from multiple tools
+- **Dual Build Support**: Same project buildable with both Maven and Gradle
+
+## Testing
+
+Run tests for each project:
+
+```bash
+# Java project
+cd customer-address-jpa
+mvn clean verify
+
+# Kotlin project (Maven)
+cd kustomer-address-jpa
+mvn clean verify
+
+# Kotlin project (Gradle)
+cd kustomer-address-jpa
+./gradlew test
+```
+
+## Architecture
+
+The projects follow a traditional 3-tier architecture:
+- **Web Layer**: REST controllers implementing OpenAPI interfaces
+- **Service Layer**: Business logic with MapStruct DTOs
+- **Data Layer**: JPA entities with custom converters
+
+Both implementations maintain identical public APIs and behavior, allowing for direct comparison of language-specific benefits and challenges.
