@@ -6,7 +6,6 @@ import com.izertis.example.domain.PaymentMethod;
 import com.izertis.example.events.EventsProducerInMemoryContext;
 import com.izertis.example.service.CustomerService;
 import com.izertis.example.service.impl.CustomerServiceImpl;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,15 +20,8 @@ public class ServicesInMemoryConfig extends RepositoriesInMemoryConfig {
 
     protected final EventsProducerInMemoryContext eventsProducerInMemoryContext = new EventsProducerInMemoryContext();
 
-    private ApplicationEventPublisher applicationEventPublisher = new ApplicationEventPublisher() {
-        @Override
-        public void publishEvent(Object event) {
-            publishedEvents.add(event);
-        }
-    };
-
     protected final CustomerServiceImpl customerService = new CustomerServiceImpl(customerRepository(),
-            eventsProducerInMemoryContext.customerEventsProducer(), applicationEventPublisher);
+            eventsProducerInMemoryContext.customerEventsProducer());
 
     @Bean
     public <T extends CustomerService> T customerService() {

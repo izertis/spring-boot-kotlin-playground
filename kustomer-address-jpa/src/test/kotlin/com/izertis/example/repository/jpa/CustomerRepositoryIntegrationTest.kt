@@ -34,19 +34,16 @@ class CustomerRepositoryIntegrationTest : BaseRepositoryIntegrationTest() {
 
   @Test
   fun saveTest() {
-      val customer = Customer(
-          name = "Jane Smith",
-          email = "jane.smith@example.com",
-          addresses = mutableListOf(Address(street = "456 Elm St", city = "Othertown")),
-      )
-
-// OneToMany paymentMethods owner: true
-      val paymentMethod = PaymentMethod(
-          type = PaymentMethodType.VISA,
-          cardNumber = "6543210987654321"
-      )
-      customer.addPaymentMethods(paymentMethod)
-
+    val customer = Customer(
+      name = "Jane Smith",
+      email = "jane.smith@example.com",
+      addresses = mutableListOf(
+          Address(street = "456 Elm St", city = "Othertown")),
+    )
+    .addPaymentMethods(PaymentMethod(
+      type = PaymentMethodType.VISA,
+      cardNumber = "6543210987654321"
+    ))
     // Persist aggregate root
     val created = customerRepository.save(customer)
 

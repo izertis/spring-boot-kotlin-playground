@@ -2,14 +2,13 @@ package com.izertis.example.service.impl;
 
 import com.izertis.example.domain.Customer;
 import com.izertis.example.events.CustomerEventsProducer;
-import com.izertis.example.service.impl.mappers.CustomerServiceMapper;
-import com.izertis.example.service.impl.mappers.EventsMapper;
+import com.izertis.example.repository.jpa.CustomerRepository;
 import com.izertis.example.service.CustomerService;
 import com.izertis.example.service.dtos.CustomerSearchCriteria;
-import com.izertis.example.repository.jpa.CustomerRepository;
+import com.izertis.example.service.impl.mappers.CustomerServiceMapper;
+import com.izertis.example.service.impl.mappers.EventsMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,21 +25,16 @@ public class CustomerServiceImpl implements CustomerService {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CustomerServiceMapper customerServiceMapper = CustomerServiceMapper.INSTANCE;
-
-    private final CustomerRepository customerRepository;
-
     private final EventsMapper eventsMapper = EventsMapper.INSTANCE;
 
+    private final CustomerRepository customerRepository;
     private final CustomerEventsProducer eventsProducer;
-
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public Customer createCustomer(Customer input) {
         log.debug("[CRUD] Request to save Customer: {}", input);
         var customer = customerServiceMapper.update(new Customer(), input);
         customer = customerRepository.save(customer);
-        // TODO: may need to reload the entity to fetch relationships 'mapped by id'
         // emit events
         var customerEvent = eventsMapper.asCustomerEvent(customer);
         eventsProducer.onCustomerEvent(customerEvent);

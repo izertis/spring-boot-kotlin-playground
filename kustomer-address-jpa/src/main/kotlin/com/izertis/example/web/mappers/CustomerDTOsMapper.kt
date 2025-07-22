@@ -7,10 +7,11 @@ import com.izertis.example.web.dtos.CustomerPaginatedDTO
 import com.izertis.example.web.dtos.CustomerSearchCriteriaDTO
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
+import org.mapstruct.ReportingPolicy
 import org.mapstruct.factory.Mappers
 import org.springframework.data.domain.Page
 
-@Mapper(uses = [BaseMapper::class])
+@Mapper(uses = [BaseMapper::class], unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface CustomerDTOsMapper {
 
     companion object {

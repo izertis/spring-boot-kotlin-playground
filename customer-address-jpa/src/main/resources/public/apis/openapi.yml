@@ -134,8 +134,12 @@ components:
         id:
           type: "integer"
           format: "int64"
+          readOnly: true
         version:
           type: "integer"
+          description: "Version of the document (required in PUT for concurrency control,\
+            \ should be null in POSTs)."
+          default: null
         name:
           type: "string"
           maxLength: 254
@@ -145,6 +149,7 @@ components:
           maxLength: 254
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}"
           description: ""
+          example: "me@email.com"
         addresses:
           type: "array"
           items:
@@ -158,7 +163,6 @@ components:
     CustomerPaginated:
       allOf:
       - $ref: "#/components/schemas/Page"
-      - x-business-entity-paginated: "Customer"
       - properties:
           content:
             type: "array"
@@ -205,8 +209,12 @@ components:
         id:
           type: "integer"
           format: "int64"
+          readOnly: true
         version:
           type: "integer"
+          description: "Version of the document (required in PUT for concurrency control,\
+            \ should be null in POSTs)."
+          default: null
         type:
           $ref: "#/components/schemas/PaymentMethodType"
         cardNumber:

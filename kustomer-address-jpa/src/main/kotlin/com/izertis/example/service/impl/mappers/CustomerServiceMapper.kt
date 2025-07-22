@@ -6,6 +6,7 @@ import org.mapstruct.AfterMapping
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingTarget
+import org.mapstruct.ReportingPolicy
 import org.mapstruct.factory.Mappers
 
 @Mapper(uses = [BaseMapper::class])
@@ -16,12 +17,6 @@ interface CustomerServiceMapper {
   }
 
   // input mappings
-  // CustomerSearchCriterianull-Customer searchCustomers
-  fun asCustomer(input: CustomerSearchCriteria): Customer
-
-  @Mapping(target = "id", ignore = true)
-  fun update(@MappingTarget entity: Customer, input: CustomerSearchCriteria): Customer
-
   // Customer-Customer updateCustomer
   fun asCustomer(input: Customer): Customer
 
@@ -31,6 +26,6 @@ interface CustomerServiceMapper {
   // output mappings
   @AfterMapping
   fun manageRelationships(@MappingTarget entity: Customer) {
-    entity.paymentMethods?.forEach { paymentMethods -> paymentMethods.customer = entity }
+    entity.paymentMethods.forEach { paymentMethods -> paymentMethods.customer = entity }
   }
 }

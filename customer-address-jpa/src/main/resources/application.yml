@@ -18,8 +18,9 @@ spring:
 
   security:
     user:
-      name: user
+      name: admin
       password: password
+      roles: USER,ADMIN
   jpa:
     open-in-view: false
     hibernate.ddl-auto: none

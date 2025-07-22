@@ -10,7 +10,6 @@ springdoc.swagger-ui.urls:
 management:
   endpoints.web.exposure.include: "*"
 
-app:
 spring:
   modulith.events.externalization.enabled: true
   modulith.events.jdbc.schema-initialization.enabled: true

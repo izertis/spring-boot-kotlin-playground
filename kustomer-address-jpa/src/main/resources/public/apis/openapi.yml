@@ -1,8 +1,8 @@
 openapi: 3.0.1
 info:
-  title: "Project Name"
+  title: "Kustomer JPA Example"
   version: 0.0.1
-  description: "Project Name"
+  description: "Kustomer JPA Example"
   contact:
     email: email@domain.com
 servers:
@@ -149,6 +149,7 @@ components:
           maxLength: 254
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}"
           description: ""
+          example: "me@email.com"
         addresses:
           type: "array"
           items:

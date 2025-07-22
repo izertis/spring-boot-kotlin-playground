@@ -26,8 +26,8 @@ ext {
 plugins {
     java
     val kotlinVersion = "2.2.0"
-    kotlin("plugin.spring") version kotlinVersion apply false
-    kotlin("plugin.serialization") version kotlinVersion apply false
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
     val springBootVersion = "3.5.3"
@@ -39,7 +39,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -54,14 +54,15 @@ dependencyManagement {
     imports {
         mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}")
+        mavenBom("org.springframework.modulith:spring-modulith-bom:1.4.1")
     }
 }
 
 
 dependencies {
     // Add Kotlin dependencies
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Spring Boot starters
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -78,12 +79,19 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
     implementation("org.springframework.cloud:spring-cloud-stream-schema:${property("spring-cloud-stream-schema.version")}")
     implementation("io.confluent:kafka-avro-serializer:5.3.0")
+    implementation("org.apache.avro:avro:1.11.3")
+    // transactional outbox with zenwave and spring-modulith
     implementation("io.zenwave360.sdk:spring-modulith-events-scs:${zenwaveEventsExternalizerVersion}")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-avro")
+    implementation("org.springframework.modulith:spring-modulith-starter-core")
+    implementation("org.springframework.modulith:spring-modulith-starter-jdbc")
+
+    // MapStruct
+    implementation("org.mapstruct:mapstruct:${property("mapstruct.version")}")
+    kapt("org.mapstruct:mapstruct-processor:${property("mapstruct.version")}")
 
     // Utils
     implementation("jakarta.validation:jakarta.validation-api:${property("jakarta.validation-api.version")}")
-    implementation("org.mapstruct:mapstruct:${property("mapstruct.version")}")
-    kapt("org.mapstruct:mapstruct-processor:${property("mapstruct.version")}")
     implementation("org.apache.commons:commons-lang3")
 
     // Swagger
@@ -94,9 +102,11 @@ dependencies {
     testImplementation("org.springframework:spring-webflux")
     testImplementation("com.intuit.karate:karate-core:${property("karate.version")}")
     testImplementation("org.testcontainers:junit-jupiter")
+}
 
-    // Add Avro dependencies
-    implementation("org.apache.avro:avro:1.11.3")
+kapt {
+    // exclude(group = "org.springframework.modulith", module = "spring-modulith-apt")
+    includeCompileClasspath = false
 }
 
 tasks.withType<Test> {
@@ -110,11 +120,11 @@ tasks.named("compileKotlin") {
     dependsOn("generateAsyncApiProvider")
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class.java).configureEach {
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask> {
     dependsOn("openApiGenerate")
     dependsOn("generateAsyncApiDtos")
+    dependsOn("generateAsyncApiProvider")
 }
-
 
 openApiGenerate {
     generatorName.set("kotlin-spring")
@@ -160,6 +170,7 @@ tasks.register<dev.jbang.gradle.tasks.JBangTask>("generateAsyncApiProvider") {
         "targetFolder=${layout.buildDirectory.dir("generated-sources/zenwave").get().asFile.absolutePath}",
         "role=provider",
         "style=imperative",
+        "transactionalOutbox=modulith",
         "modelPackage=$asyncApiModelPackage",
         "producerApiPackage=$asyncApiProducerApiPackage",
         "consumerApiPackage=$asyncApiConsumerApiPackage"

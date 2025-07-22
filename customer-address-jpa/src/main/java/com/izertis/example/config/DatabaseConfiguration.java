@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @Configuration
-@EnableJpaRepositories("io.zenwave360.example")
-@EntityScan("io.zenwave360.example")
+@EnableJpaRepositories("com.izertis.example")
+@EntityScan("com.izertis.example")
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement
 public class DatabaseConfiguration {
