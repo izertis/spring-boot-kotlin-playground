@@ -1,33 +1,38 @@
 # Desarrollando aplicaciones Spring Boot con Kotlin: Un análisis en profundidad
 
 <!-- TOC -->
-* [Desarrollando aplicaciones Spring Boot con Kotlin: Un análisis en profundidad](#desarrollando-aplicaciones-spring-boot-con-kotlin-un-análisis-en-profundidad)
-  * [Porque Spring-Boot + Kotlin](#porque-spring-boot--kotlin)
-  * [Playground Project: Customer/Kustomer API with JPA](#playground-project-customerkustomer-api-with-jpa)
-    * [Stack Tecnologico](#stack-tecnologico)
-    * [API-First con OpenAPI Generator](#api-first-con-openapi-generator)
-    * [Procesador de anotaciones y MapStruct](#procesador-de-anotaciones-y-mapstruct)
-    * [API-First con AsyncAPI (ZenWave SDK)](#api-first-con-asyncapi-zenwave-sdk)
-    * [Serialización de eventos con Avro](#serialización-de-eventos-con-avro)
-  * [Proyecto Playground: Modelo y Funcionalidad](#proyecto-playground-modelo-y-funcionalidad)
-    * [Ejecución](#ejecución)
-    * [APIs Publicas](#apis-publicas)
-  * [Comparación Java - Kotlin](#comparación-java---kotlin)
-    * [Data Classes vs Lombok](#data-classes-vs-lombok)
-    * [Objetos de Datos y Getters/Setters](#objetos-de-datos-y-getterssetters)
-    * [Java Records: Solución deficiente al problema de los getters/setters](#java-records-solución-deficiente-al-problema-de-los-getterssetters)
-    * [Data Classes en Kotlin: La alternativa a Lombok y Java Records](#data-classes-en-kotlin-la-alternativa-a-lombok-y-java-records)
-      * [Domain Entity con JPA and Lombok en Java](#domain-entity-con-jpa-and-lombok-en-java)
-      * [Domain Entity con Data Classes and JPA en Kotlin](#domain-entity-con-data-classes-and-jpa-en-kotlin)
-      * [Poblando Objetos en Java](#poblando-objetos-en-java)
-      * [Poblando Objetos en Kotlin](#poblando-objetos-en-kotlin)
-      * [Poblando Records de Java](#poblando-records-de-java)
-    * [Java Optional vs Kotlin Null Safety](#java-optional-vs-kotlin-null-safety)
-    * [Optional fluid APIs vs Kotlin fluid APIs](#optional-fluid-apis-vs-kotlin-fluid-apis)
-    * [API Colecciones/Streams Java vs Kotlin](#api-coleccionesstreams-java-vs-kotlin)
-    * [Interpolación de Strings y Text Blocks](#interpolación-de-strings-y-text-blocks)
-      * [Interpolación de Strings en Java 24](#interpolación-de-strings-en-java-24)
-  * [Conclusiones](#conclusiones)
+- [Desarrollando aplicaciones Spring Boot con Kotlin: Un análisis en profundidad](#desarrollando-aplicaciones-spring-boot-con-kotlin-un-análisis-en-profundidad)
+  - [Porque Spring-Boot + Kotlin](#porque-spring-boot--kotlin)
+  - [Playground Project: Customer/Kustomer API with JPA](#playground-project-customerkustomer-api-with-jpa)
+    - [Stack Tecnologico](#stack-tecnologico)
+    - [API-First con OpenAPI Generator](#api-first-con-openapi-generator)
+    - [Procesador de anotaciones y MapStruct](#procesador-de-anotaciones-y-mapstruct)
+    - [API-First con AsyncAPI (ZenWave SDK)](#api-first-con-asyncapi-zenwave-sdk)
+    - [Serialización de eventos con Avro](#serialización-de-eventos-con-avro)
+  - [Proyecto Playground: Modelo y Funcionalidad](#proyecto-playground-modelo-y-funcionalidad)
+    - [Ejecución](#ejecución)
+    - [APIs Publicas](#apis-publicas)
+  - [Comparación Java - Kotlin](#comparación-java---kotlin)
+    - [Data Classes vs Lombok](#data-classes-vs-lombok)
+    - [Objetos de Datos y Getters/Setters](#objetos-de-datos-y-getterssetters)
+    - [Java Records: Solución deficiente al problema de los getters/setters](#java-records-solución-deficiente-al-problema-de-los-getterssetters)
+    - [Data Classes en Kotlin: La alternativa a Lombok y Java Records](#data-classes-en-kotlin-la-alternativa-a-lombok-y-java-records)
+      - [Domain Entity con JPA and Lombok en Java](#domain-entity-con-jpa-and-lombok-en-java)
+      - [Domain Entity con Data Classes and JPA en Kotlin](#domain-entity-con-data-classes-and-jpa-en-kotlin)
+      - [Poblando Objetos en Java](#poblando-objetos-en-java)
+      - [Poblando Objetos en Kotlin](#poblando-objetos-en-kotlin)
+        - [Opción 1: Setters](#opción-1-setters)
+        - [Opción 2: Funcion APPLY](#opción-2-funcion-apply)
+        - [Opción 3: Constructor/Builder](#opción-3-constructorbuilder)
+      - [Poblando Records de Java](#poblando-records-de-java)
+    - [Java Optional vs Kotlin Null Safety](#java-optional-vs-kotlin-null-safety)
+    - [Optional fluid APIs vs Kotlin fluid APIs](#optional-fluid-apis-vs-kotlin-fluid-apis)
+    - [API Colecciones/Streams Java vs Kotlin](#api-coleccionesstreams-java-vs-kotlin)
+      - [Ejemplo en Kotlin](#ejemplo-en-kotlin)
+      - [Ejemplo equivalente en Java](#ejemplo-equivalente-en-java)
+    - [Interpolación de Strings y Text Blocks](#interpolación-de-strings-y-text-blocks)
+      - [Interpolación de Strings en Java 24](#interpolación-de-strings-en-java-24)
+  - [Conclusiones](#conclusiones)
 <!-- TOC -->
 
 ## Porque Spring-Boot + Kotlin
@@ -292,19 +297,19 @@ Una diferencia notable es a la hora de definir el modelo de datos anotado para J
 
 ### Objetos de Datos y Getters/Setters
 
-El estándar Java para JPA/Hibernate requiere utilizar objetos de datos con getters y setters. Dado que estos métodos rara vez aportan ninguna lógica, incluso si son generados automáticamente por el IDE solo aportan ruido al código. Por ello, es una práctica muy extendida utilizar librerías como Lombok para generarlos automáticamente en tiempo de compilación, evitando así todo el código _boilerplate_ en los ficheros fuente.
+El estándar en Java para trabajar con JPA/Hibernate requiere clases con métodos _getters_ y _setters_. Como estos métodos rara vez contienen lógica, suelen aportar poco valor, y aunque puedan generarse automáticamente desde el IDE, añaden ruido al código. Por esta razón es habitual usar librerías como Lombok, que los genera en tiempo de compilación y elimina ese _boilerplate_ en los ficheros fuente.
 
-Aunque Lombok es una librería muy extendida y utilizada, su implementación depende de _trucos_ o _hacks_ sobre la implementación interna del compilador de Java y nada garantiza que pueda seguir funcionando en versiones futuras. De hecho, Lombok históricamente suele lanzar soporte para nuevas versiones de Java con un retraso de 1 a 3 semanas, dependiendo de la complejidad de los cambios internos en el compilador.
+Aunque Lombok es muy popular, su funcionamiento se basa en _hacks_ sobre el compilador de Java, lo cual genera cierta fragilidad. De hecho, suele haber un retraso de 1 a 3 semanas en dar soporte a nuevas versiones del JDK, dependiendo de los cambios internos que introduzcan.
 
 ### Java Records: Solución deficiente al problema de los getters/setters
 
-Un intento de Java para evitar el código _boilerplate_ relacionado con getters y setters han sido los [Java Records](https://docs.oracle.com/en/java/javase/17/language/records.html). Si bien es cierto que eliminan la necesidad de escribir getters y setters, el problema es que los objetos resultantes únicamente pueden ser instanciados mediante un **constructor con todas las propiedades**, lo que significa constructores con un gran número de parámetros para cualquier entidad mínimamente compleja.
+Los [Java Records](https://docs.oracle.com/en/java/javase/17/language/records.html) se introdujeron como intento de Java para evitar el boilerplate de getters y setters. Aunque eliminan la necesidad de definirlos explícitamente, su diseño obliga a utilizar un constructor con todos los campos obligatorios, lo que complica la creación de objetos complejos.
 
-Los Java Records presentan un ejemplo claro de una buena idea con una implementación deficiente, ya que cualquier método Java (o constructor) con número alto de parámetros (más de 3 o 5) es una fuente potencial de errores y un mal diseño a evitar. Es difícil saber a qué parámetro corresponde cada valor, especialmente si los valores son del mismo tipo, como `String`, y si añadimos, quitamos o modificamos el orden de los parámetros, podemos introducir errores en el código existente difíciles de detectar.
+Este tipo de constructor con múltiples parámetros (especialmente si son del mismo tipo, como String) es una fuente potencial de errores, difícil de mantener, y alejado de las buenas prácticas de diseño. Además, modificar el orden, añadir o eliminar campos puede romper fácilmente el código existente.
 
-En mi experiencia profesional, he observado muchos más errores y problemas derivados de métodos con número elevado de parámetros, que por el uso de objetos de datos mutables, que es uno de los problemas que los Java Records pretenden resolver.
+En la práctica, he visto más errores por uso de metodos con muchos parámetros que por trabajar con objetos mutables, que es uno de los problemas que los Java Records pretenden resolver.
 
-Además, los Java Records no son compatibles con JPA, por lo que no pueden ser utilizados para persistir datos en base de datos.
+Y lo más relevante: los Java Records no son compatibles con JPA, por lo que no pueden usarse como entidades persistentes.
 
 ### Data Classes en Kotlin: La alternativa a Lombok y Java Records
 
@@ -312,44 +317,57 @@ Kotlin introduce el concepto de [Data Classes](https://kotlinlang.org/docs/data-
 
 - Getters y setters automáticos que pueden ser sobrescritos en caso de necesitar código adicional
 - Métodos `toString()`, `equals()` y `hashCode()` automáticos
-- Sintaxis de acceso y modificación a las propiedades sin necesidad de getters (`customer.name` en lugar de `customer.getName()`) pero que internamete usa los getters/setters.
-- Un único constructor que puede ser invocado con un número variable de parámetros, gracias a la sintaxis de Kotlin que permite nombrar los parámetros en la invocación del constructor
-- Si se necesita un constructor sin parámetros, se puede conseguir simplemente definiendo valores por defecto a las propiedades no nullables
+- Sintaxis de acceso y modificación a las propiedades sin necesidad de getters (`customer.name` en lugar de `customer.getName()`)  aunque internamente se usen getters/setters.
+- Un único constructor que puede ser invocado con un número variable de parámetros, gracias a la sintaxis de Kotlin que permite nombrar los parámetros en la invocación del constructor.
+- Si se necesita un constructor sin parámetros, se puede conseguir simplemente definiendo valores por defecto a las propiedades no nullables.
 
 Con la sintaxis de Kotlin para objetos de datos no hay problema de confusión entre parámetros y los parámetros con nombre proporcionan la flexibilidad de un patrón Builder sin necesidad de código adicional ni librerías externas como Lombok.
 
 #### Domain Entity con JPA and Lombok en Java
 
-Ejemplo de una entidad de dominio con JPA y Lombok en Java:
+Ejemplo de una entidad de dominio con JPA y Lombok en Java, incluyendo anotaciones de Lombok (`@Getter`, `@Setter`) para eliminar el código repetitivo de getters y setters, y se utilizan anotaciones de validación (`@NotNull`, `@Size`, `@Email`) junto con configuración avanzada de persistencia:
 
 ![Domain Entity con JPA and Lombok en Java](./images/CustomerEntity.java.png)
 https://github.com/izertis/spring-boot-kotlin-playground/blob/main/customer-address-jpa/src/main/java/com/izertis/example/domain/Customer.java#L23
 
 #### Domain Entity con Data Classes and JPA en Kotlin
 
-Ejemplo de una entidad de dominio con Data Classes y JPA en Kotlin:
+Ejemplo equivalente al modelo Java, pero utilizando Kotlin y `data class`:
 
 ![Domain Entity con Data Classes and JPA en Kotlin](./images/CustomerEntity.kt.png)
 https://github.com/izertis/spring-boot-kotlin-playground/blob/main/kustomer-address-jpa/src/main/kotlin/com/izertis/example/domain/Customer.kt#L21
 
-Con la misma cantidad de código, la entidad de dominio en Kotlin ofrece muchas mas ventajas a la hora de ser utilizada en codigo.
+Con la misma cantidad de código, la entidad de dominio en Kotlin ofrece muchas mas ventajas a la hora de ser invocada en codigo y sin necesidad de librerías externas.
 
 #### Poblando Objetos en Java
 
-Una manera muy practica de evitar variables temporales al instanciar y poblar objeto es utilizar los setters encadenados de Lombok, activados con la propiedad `lombok.accessors.chain=true`, o utilizar el patron Builder de Lombok. Esto da lugar a una sintaxis mas fluida:
+Una manera muy practica de evitar variables temporales al instanciar y poblar objeto es utilizar los setters encadenados de Lombok, activados con la propiedad `lombok.accessors.chain=true`, o utilizar el patron Builder de Lombok. Esto da lugar a una sintaxis mas fluida.
+
+El siguiente ejemplo muestra cómo instanciar un objeto Customer, asignar su nombre, email, dirección y métodos de pago mediante setters encadenados:
 
 ![Poblando Java con setters encadenados de Lombok](./images/Customer-Populating.java.png)
 
+Esta es probablemente la versión mas elegante con API fluida en Java que vamos a utilizar para comparar con distintas opciones en Kotlin.
+
 #### Poblando Objetos en Kotlin
 
-En Kotlin las opciones para poblar objetos de tipo Data Class son multiples: 
+En Kotlin, hay múltiples formas idiomáticas de poblar objetos tipo data class, adaptándose tanto a estilos imperativos como funcionales. Estas opciones permiten un código más expresivo, menos verboso y sin necesidad de librerías externas.
 
-- Poblar propiedad a propiedad, similar a utilizar llamadas a setters individuales
-- Utilizar la funcion de scope `apply` para poblar todas las propiedades en un bloque de codigo
+##### Opción 1: Setters
+
+Poblar propiedad a propiedad, similar a utilizar llamadas a setters individuales:
 
 ![Poblando Data Class con setters en Kotlin](./images/Customer-Populating-setters.kt.png)
 
-- Utilizar el constructor de la Data Class, que permite instanciar el objeto con un numero variable de parametros, gracias a la sintaxis de Kotlin que permite nombrar los parametros en la invocacion del constructor
+##### Opción 2: Funcion APPLY
+
+Utilizar la función `apply` para poblar el objeto sin variables temporales:
+
+![Poblando Data Class con apply en Kotlin](./images/Customer-Populating-apply.kt.png)
+
+##### Opción 3: Constructor/Builder
+
+Utilizar el constructor de la Data Class, que permite instanciar el objeto con un numero variable de parametros, gracias a la sintaxis de Kotlin que permite nombrar los parametros en la invocacion del constructor
 
 ![Poblando Data Class con Constructor/Builder en Kotlin](./images/Customer-Populating-builder.kt.png)
 
@@ -365,7 +383,7 @@ Piensa en cómo sería este código si quitásemos los comentarios. 🤦
 
 ### Java Optional vs Kotlin Null Safety
 
-En Kotlin los tipos son non-nullable por defecto, esto añade cierta seguridad en tiempo de compilación, ya que cualquier acceso a una propiedad nullable requiere una comprobación explicita.
+En Kotlin los tipos son **non-nullable por defecto**, esto añade cierta seguridad en tiempo de compilación, ya que cualquier acceso a una propiedad nullable requiere una comprobación explicita.
 
 En Java, ciertas APIs públicas, como por ejemplo Spring-Data, para el manejo de valores nulos se realiza típicamente con `Optional<T>`, mientras que Kotlin ya incorpora null safety directamente en el sistema de tipos.
 
@@ -379,30 +397,64 @@ O utilizar las funciones nativas de Kotlin para la concatenacion de llamadas asi
 
 ### Optional fluid APIs vs Kotlin fluid APIs
 
-Podemos ver como se comparan las APIs fluidas de Java con `Optional` y Kotlin con Null Safety con este ejemplo en la capa de servicios:
+Las APIs fluidas permiten encadenar transformaciones y validaciones de datos sin necesidad de estructuras condicionales explícitas. Tanto Java como Kotlin ofrecen mecanismos para esto, aunque con enfoques distintos:
+
+- Java utiliza Optional con métodos como map(), filter() y orElse().
+- Kotlin combina operadores seguros (?., ?:) con funciones de alcance como let, also, apply, etc.
+
+**Ejemplo 1: Capa de servicios**
+
+En Kotlin, el flujo de transformación es fluido, legible y seguro:
 
 ![Null Safety Fluent API en Kotlin](./images/NullSafety-FluentAPI.kt.png)
 
+En Java, aunque se puede lograr un flujo similar con Optional, el resultado es algo más verboso y menos directo:
+
 ![Optional Fluent API en Java](./images/Optional-FluentAPI.java.png)
 
-Otro ejemplo en la capa de controllers
+**Ejemplo 2: Capa de controladores**
+
+El enfoque fluido también es muy útil en la capa de controladores para devolver respuestas HTTP en función de la existencia del recurso.
+
+**Kotlin:**
 
 ![Null Safety Fluent API en Kotlin Controllers](./images/NullSafety-FluentAPI-Controller.kt.png)
 
+**Java:**
+
 ![Optional Fluent API en Java Controllers](./images/NullSafety-FluentAPI-Controller.java.png)
 
+Ambos lenguajes permiten un estilo funcional, pero Kotlin lo facilita de manera más natural y menos verbosa. El uso de operadores nativos y funciones de alcance hace que incluso flujos complejos sean compactos, seguros frente a nulos, y fáciles de leer.
 
 ### API Colecciones/Streams Java vs Kotlin
 
-La verbosidad del API de Colecciones/Streams de Java y la constante necesidad de llamar a `stream()` para poder utilizar los métodos de orden superior, junto con los múltiples `collect(...)` con diferentes collectors, hacen que el código Java sea mucho más verboso y menos legible que el código Kotlin.
+La verbosidad de la API de Streams en Java, junto con la necesidad constante de invocar `stream()` y `collect(...)`, hace que trabajar con colecciones sea más engorroso y menos legible en comparación con Kotlin.
 
-Un ejemplo sencillo que muestra cómo Kotlin resuelve el problema de una manera mucho más directa y legible:
+En Java, operar sobre listas requiere encadenar múltiples llamadas y utilizar collectors específicos incluso para operaciones comunes como `map`, `filter` o `groupingBy`.
+
+Kotlin, en cambio, proporciona una API de colecciones mucho más directa y expresiva, con soporte nativo para funciones de orden superior sobre listas, mapas y secuencias, sin necesidad de invocar métodos adicionales ni crear flujos intermedios.
+
+#### Ejemplo en Kotlin
+
+Kotlin proporciona una API de colecciones más expresiva que la de Java, con soporte nativo para funciones de orden superior como `filter`, `map` o `find`. Esto permite construir transformaciones complejas de forma concisa y legible.
+
+Por ejemplo, para obtener una lista de correos electrónicos no nulos de una lista de clientes:
+
+![Collections/Streams en Kotlin](./images/CollectionsAPI-1.kt.png)
+
+Otro ejemplo típico es el uso de `find` para buscar una coincidencia concreta dentro de una enumeración:
 
 ![Collections/Streams en Kotlin](./images/CollectionsAPI.kt.png)
 
-En comparación con la verbosidad de Java:
+Este enfoque es idiomático en Kotlin y evita la necesidad de bucles explícitos o estructuras auxiliares. La combinación de expresividad, claridad y seguridad ante nulos hace que el trabajo con colecciones sea una de las áreas donde Kotlin brilla especialmente frente a Java.
+
+#### Ejemplo equivalente en Java
+
+![Collections/Streams en Java](./images/CollectionsAPI-1.java.png)
 
 ![Collections/Streams en Java](./images/CollectionsAPI.java.png)
+
+Este ejemplo sencillo ilustra cómo Kotlin reduce el *boilerplate* al mínimo y mejora la legibilidad sin sacrificar funcionalidad. A mayor complejidad en la transformación de datos, mayor será la diferencia en claridad y expresividad entre ambas aproximaciones.
 
 ### Interpolación de Strings y Text Blocks
 
@@ -416,7 +468,9 @@ Kotlin permite interpolar variables directamente con `$variable` o expresiones c
 
 #### Interpolación de Strings en Java 24
 
-Java 24 introduce string interpolation como preview feature (JEP 459), acercándose finalmente a las capacidades que Kotlin ha ofrecido desde el principio, aunque aún requiere activar preview features para su uso.
+Desde Java 24, se ha introducido la interpolación de strings como una preview feature (JEP 459). Esta mejora acerca a Java a la ergonomía que Kotlin ya proporciona, aunque requiere activación explícita del preview para su uso.
+
+**Java 24 – Interpolación nativa (preview):**
 
 ![String Interpolation en Java 24](./images/StringInterpolation-JDK24.java.png)
 

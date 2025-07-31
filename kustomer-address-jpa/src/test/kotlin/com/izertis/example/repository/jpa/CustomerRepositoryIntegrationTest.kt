@@ -43,14 +43,14 @@ class CustomerRepositoryIntegrationTest : BaseRepositoryIntegrationTest() {
                 street = "456 Elm St"
                 city = "Othertown"
             })
+            // OneToMany paymentMethods owner: true
+            val paymentMethod = PaymentMethod().apply {
+                type = PaymentMethodType.VISA
+                cardNumber = "6543210987654321"
+            }
+            addPaymentMethods(paymentMethod)
         }
 
-        // OneToMany paymentMethods owner: true
-        val paymentMethod = PaymentMethod().apply {
-            type = PaymentMethodType.VISA
-            cardNumber = "6543210987654321"
-        }
-        customer.addPaymentMethods(paymentMethod)
 
         // Persist aggregate root
         val created = customerRepository.save(customer)

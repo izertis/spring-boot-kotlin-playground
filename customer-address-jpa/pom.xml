@@ -325,107 +325,90 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>io.zenwave360.sdk</groupId>
+                <artifactId>zenwave-sdk-maven-plugin</artifactId>
+                <version>${zenwave.version}</version>
+                <configuration>
+                    <inputSpec>${project.basedir}/src/main/resources/public/apis/asyncapi.yml</inputSpec>
+                    <skip>false</skip>
+                    <addCompileSourceRoot>true</addCompileSourceRoot>
+                    <addTestCompileSourceRoot>true</addTestCompileSourceRoot>
+                </configuration>
+                <executions>
+                    <!-- DTOs -->
+                    <!--							<execution>-->
+                    <!--								<id>generate-asyncapi-dtos</id>-->
+                    <!--								<phase>generate-sources</phase>-->
+                    <!--								<goals>-->
+                    <!--									<goal>generate</goal>-->
+                    <!--								</goals>-->
+                    <!--								<configuration>-->
+                    <!--									<generatorName>jsonschema2pojo</generatorName>-->
+                    <!--									<configOptions>-->
+                    <!--										<modelPackage>${asyncApiModelPackage}</modelPackage>-->
+                    <!--										<jsonschema2pojo.isUseJakartaValidation>true</jsonschema2pojo.isUseJakartaValidation>-->
+                    <!--										<jsonschema2pojo.useLongIntegers>true</jsonschema2pojo.useLongIntegers>-->
+                    <!--										<jsonschema2pojo.includeAdditionalProperties>true</jsonschema2pojo.includeAdditionalProperties>-->
+                    <!--									</configOptions>-->
+                    <!--								</configuration>-->
+                    <!--							</execution>-->
+                    <!-- Generate PROVIDER -->
+                    <execution>
+                        <id>generate-asyncapi</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>spring-cloud-streams3</generatorName>
+                            <configOptions>
+                                <role>provider</role>
+                                <style>imperative</style>
+                                <transactionalOutbox>modulith</transactionalOutbox>
+                                <generatedAnnotationClass>org.springframework.aot.generate.Generated</generatedAnnotationClass><!-- skips jacoco coverage -->
+                                <modelPackage>${asyncApiModelPackage}</modelPackage>
+                                <producerApiPackage>${asyncApiProducerApiPackage}</producerApiPackage>
+                                <consumerApiPackage>${asyncApiConsumerApiPackage}</consumerApiPackage>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.zenwave360.sdk.plugins</groupId>
+                        <artifactId>asyncapi-spring-cloud-streams3</artifactId>
+                        <version>${zenwave.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.zenwave360.sdk.plugins</groupId>
+                        <artifactId>asyncapi-jsonschema2pojo</artifactId>
+                        <version>${zenwave.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/resources/public/apis/avro</sourceDirectory>
+                    <outputDirectory>${project.basedir}/target/generated-sources/avro</outputDirectory>
+                    <imports>
+                        <import>${project.basedir}/src/main/resources/public/apis/avro/PaymentMethodType.avsc</import>
+                        <import>${project.basedir}/src/main/resources/public/apis/avro/PaymentMethod.avsc</import>
+                        <import>${project.basedir}/src/main/resources/public/apis/avro/Address.avsc</import>
+                    </imports>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>asyncapi-code-generation</id>
-			<activation>
-				<file>
-					<exists>${project.basedir}/src/main/resources/public/apis/asyncapi.yml</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>io.zenwave360.sdk</groupId>
-						<artifactId>zenwave-sdk-maven-plugin</artifactId>
-						<version>${zenwave.version}</version>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/public/apis/asyncapi.yml</inputSpec>
-							<skip>false</skip>
-							<addCompileSourceRoot>true</addCompileSourceRoot>
-							<addTestCompileSourceRoot>true</addTestCompileSourceRoot>
-						</configuration>
-						<executions>
-							<!-- DTOs -->
-<!--							<execution>-->
-<!--								<id>generate-asyncapi-dtos</id>-->
-<!--								<phase>generate-sources</phase>-->
-<!--								<goals>-->
-<!--									<goal>generate</goal>-->
-<!--								</goals>-->
-<!--								<configuration>-->
-<!--									<generatorName>jsonschema2pojo</generatorName>-->
-<!--									<configOptions>-->
-<!--										<modelPackage>${asyncApiModelPackage}</modelPackage>-->
-<!--										<jsonschema2pojo.isUseJakartaValidation>true</jsonschema2pojo.isUseJakartaValidation>-->
-<!--										<jsonschema2pojo.useLongIntegers>true</jsonschema2pojo.useLongIntegers>-->
-<!--										<jsonschema2pojo.includeAdditionalProperties>true</jsonschema2pojo.includeAdditionalProperties>-->
-<!--									</configOptions>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-							<!-- Generate PROVIDER -->
-							<execution>
-								<id>generate-asyncapi</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-								<configuration>
-									<generatorName>spring-cloud-streams3</generatorName>
-									<configOptions>
-										<role>provider</role>
-										<style>imperative</style>
-										<transactionalOutbox>modulith</transactionalOutbox>
-										<includeApplicationEventListener>true</includeApplicationEventListener>
-										<modelPackage>${asyncApiModelPackage}</modelPackage>
-										<producerApiPackage>${asyncApiProducerApiPackage}</producerApiPackage>
-										<consumerApiPackage>${asyncApiConsumerApiPackage}</consumerApiPackage>
-									</configOptions>
-								</configuration>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>io.zenwave360.sdk.plugins</groupId>
-								<artifactId>asyncapi-spring-cloud-streams3</artifactId>
-								<version>${zenwave.version}</version>
-							</dependency>
-							<dependency>
-								<groupId>io.zenwave360.sdk.plugins</groupId>
-								<artifactId>asyncapi-jsonschema2pojo</artifactId>
-								<version>${zenwave.version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<!-- Other plugins -->
-					<plugin>
-						<groupId>org.apache.avro</groupId>
-						<artifactId>avro-maven-plugin</artifactId>
-						<version>${avro.version}</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>schema</goal>
-								</goals>
-								<phase>generate-sources</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/resources/public/apis/avro</sourceDirectory>
-							<outputDirectory>${project.basedir}/target/generated-sources/avro</outputDirectory>
-							<imports>
-								<import>${project.basedir}/src/main/resources/public/apis/avro/PaymentMethodType.avsc</import>
-								<import>${project.basedir}/src/main/resources/public/apis/avro/PaymentMethod.avsc</import>
-								<import>${project.basedir}/src/main/resources/public/apis/avro/Address.avsc</import>
-							</imports>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>

@@ -28,7 +28,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
 * Open [Swagger UI](http://localhost:8080/swagger-ui/index.html) in your browser.
-  Use "Basic Authentication" with username `user` and password `password` to authenticate.
+  Use "Basic Authentication" with username `admin` and password `password` to authenticate.
 
 * Running Unit Tests:
 

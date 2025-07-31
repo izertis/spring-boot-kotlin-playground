@@ -7,11 +7,12 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class CustomerRepositoryInMemory extends InMemoryJpaRepository<Customer> implements CustomerRepository {
 
-    public Customer save(Customer entity) {
+    @Override
+    public <T extends Customer> T save(T entity) {
         Customer finalEntity = super.save(entity);
         finalEntity.getPaymentMethods().forEach(paymentMethod -> {
             paymentMethod.setId(firstNonNull(paymentMethod.getId(), finalEntity.getId()));
         });
-        return finalEntity;
+        return (T) finalEntity;
     }
 }
